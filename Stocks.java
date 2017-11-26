@@ -28,5 +28,11 @@ public class Stocks {
 		if(s.equals("green")) {return list.get(3).getPrice();}
 		return 0;
 	}
+	
+	public boolean finish() {
+		if(list.get(0).getPrice()==30||list.get(1).getPrice()==30||list.get(2).getPrice()==30||list.get(3).getPrice()==30) return true;
+		else return false;
+	}
+	
 
 }
