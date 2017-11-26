@@ -18,4 +18,8 @@ public class Stock {
 	public String getName() {
 		return name;
 	}
+	
+	public int getPrice() {
+		return price;
+	}
 }

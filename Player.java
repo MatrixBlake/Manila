@@ -31,5 +31,6 @@ public class Player {
 	public int getBlue() {return blueNumber;}
 	public int getYellow() {return yellowNumber;}
 	public int getGreen() {return greenNumber;}
+	public int getMoney() {return money;}
 	
 }
