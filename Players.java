@@ -42,5 +42,8 @@ public class Players {
 		list.get(i).pay(m);
 	}
 	
+	public void earn(int i, int m) {
+		list.get(i).earn(m);
+	}
 
 }

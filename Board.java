@@ -8,15 +8,37 @@ public class Board {
 	private Stocks stocks;
 	private int captain;
 	Object[] possibleValues = { "black", "blue", "yellow","green" };
+	private ArrayList<Integer> wharfPosition;
+	private ArrayList<Integer> wharfPrice;
+	private ArrayList<Integer> shipyardPosition; 
+	private ArrayList<Integer> shipyardPrice;
+	private int insurrance; 
+	private int getToWharf;
+	private int getToShipyard;
 	
 	public Board() {
 		int n= Integer.parseInt((String) JOptionPane.showInputDialog(null, "Input the number of players", "Input", JOptionPane.PLAIN_MESSAGE, null, null,null));
 		players=new Players(n);
 		stocks=new Stocks();
-		captain=0;				
+		wharfPrice=new ArrayList<Integer>();
+		wharfPrice.add(4);
+		wharfPrice.add(3);
+		wharfPrice.add(2);
+		shipyardPrice= new ArrayList<Integer>();
+		shipyardPrice.add(4);
+		shipyardPrice.add(3);
+		shipyardPrice.add(2);
+		captain=0;	
+		insurrance=0;
 	}
 	
 	public void bid() {
+		wharfPosition=new ArrayList<Integer>();
+		shipyardPosition=new ArrayList<Integer>();
+		getToWharf=0;
+		getToShipyard=0;
+		for(int i=0;i<3;i++) {wharfPosition.add(0);}
+		for(int i=0;i<3;i++){shipyardPosition.add(0);}
 		int bid=0;
 		int n=0;
 		boolean brk=false;
@@ -55,12 +77,69 @@ public class Board {
 		System.out.println(boats);
 	}
 	
+	public void dice() {
+		boats.dice();
+	}
+	
+	public void takePosition() {
+		Object[] AllPostions= {boats.getBoat(0).getName(),boats.getBoat(1).getName(),boats.getBoat(2).getName(),"whalf","shipyard","insurrance"};
+		for(int i=0;i<players.getNumber();i++) {
+			String choice=(String) JOptionPane.showInputDialog(null, "Player"+(i+1)+" , choose 1 position", "Position", JOptionPane.INFORMATION_MESSAGE, null, AllPostions, AllPostions[0]);
+			if(choice.equals(boats.getBoat(0).getName())) {players.pay(i, boats.takePosition(0, (i+1)));}
+			if(choice.equals(boats.getBoat(1).getName())) {players.pay(i, boats.takePosition(1, (i+1)));}
+			if(choice.equals(boats.getBoat(2).getName())) {players.pay(i, boats.takePosition(2, (i+1)));}
+			if(choice.equals("whalf")) {
+				for(int j=0;j<3;j++) {
+					if(wharfPosition.get(j)==0) {wharfPosition.set(j, i+1);players.pay(i, wharfPrice.get(j));break;}
+				}
+			}
+			if(choice.equals("shipyard")) {
+				for(int j=0;j<3;j++) {
+					if(shipyardPosition.get(j)==0) {shipyardPosition.set(j, i+1);players.pay(i, shipyardPrice.get(j));break;}
+				}
+			}
+			if(choice.equals("insurrance")) {insurrance=i;players.earn(i,10);}
+		}		
+	}
+	
+	public void check() {
+		for(int i=0;i<3;i++) {
+			if(boats.getPosition(i)>13) getToWharf++;
+			if(boats.getPosition(i)<13) getToShipyard++;
+		}
+	}
+	
+	public void balance() {
+		for(int i=0;i<3;i++) {
+			int earn=boats.earning(i);
+			for(int j=0;j<boats.getPositionTaken(i).size();j++) {
+				if(boats.getPositionTaken(i).get(j)>0) {players.earn(boats.getPositionTaken(i).get(j)-1, earn);}
+			}
+		}
+		if(wharfPosition.get(0)>0 && getToWharf>0) {players.earn(wharfPosition.get(0)-1, 6);}
+		if(wharfPosition.get(1)>0 && getToWharf>1) {players.earn(wharfPosition.get(1)-1, 8);}
+		if(wharfPosition.get(2)>0 && getToWharf>2) {players.earn(wharfPosition.get(0)-1, 15);}
+		if(shipyardPosition.get(0)>0 && getToShipyard>0) {players.earn(shipyardPosition.get(0)-1, 6);}
+		if(shipyardPosition.get(1)>0 && getToShipyard>0) {players.earn(shipyardPosition.get(0)-1, 8);}
+		if(shipyardPosition.get(2)>0 && getToShipyard>0) {players.earn(shipyardPosition.get(0)-1, 15);}
+		if(insurrance>0) {
+			if(getToShipyard==1)players.pay(insurrance-1, 6);
+			if(getToShipyard==2)players.pay(insurrance-1, 14);
+			if(getToShipyard==3)players.pay(insurrance-1, 29);
+		}
+	}
+	
 	public static void main(String[] args) {
 		Board bo= new Board();
 		while(!bo.stocks.finish()) {
 			bo.bid();
 			bo.setBoats();
-			
+			for(int i=0;i<3;i++) {
+				bo.dice();
+				bo.takePosition();
+			}
+			bo.check();
+			bo.balance();			
 		}
 		
 		

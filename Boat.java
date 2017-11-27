@@ -52,10 +52,27 @@ public class Boat {
 	}
 	
 	public void dice() {
-		int random=(int)Math.random()*6+1;
+		int random=(int)(Math.random()*6)+1;
 		position=position+random;
 	}
 	
 	public int getPosition() {return position;}
 	public String getName() {return name;}
+	public ArrayList<Integer> getPositionTaken(){return positionTaken;}
+	
+	public int takePosition(int n) {
+		for(int i=0;i<positionTaken.size();i++) {
+			if(positionTaken.get(i)==0) {positionTaken.set(i,n);return positionPrice.get(i);}
+		}
+		return 0;
+	}
+	
+	public int earning() {
+		int n=0;
+		for(int i=0;i<positionTaken.size();i++) {
+			if(positionTaken.get(i)>0)n++;
+		}
+		return totalPrice/n;
+	}
+	
 }

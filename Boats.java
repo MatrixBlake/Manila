@@ -17,5 +17,31 @@ public class Boats {
 		return s;
 	}
 	
+	public void dice() {
+		list.get(0).dice();
+		list.get(1).dice();
+		list.get(2).dice();
+		System.out.println(toString());
+	}
+	
+	public Boat getBoat(int i) {
+		return list.get(i);
+	}
+	
+	public int takePosition(int m, int n) {
+		return list.get(m).takePosition(n);
+	}
+	
+	public int earning(int m) {
+		return list.get(m).earning();
+	}
+	
+	public ArrayList<Integer> getPositionTaken(int m){
+		return list.get(m).getPositionTaken();
+	}
+	
+	public int getPosition(int m) {
+		return list.get(m).getPosition();
+	}
 
 }
