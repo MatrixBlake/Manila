@@ -12,7 +12,11 @@ public class Boats {
 	public String toString() {
 		String s="";
 		for(int i=0;i<list.size();i++) {
-			s=s+list.get(i).getName()+" "+list.get(i).getPosition()+"\r\n";
+			s=s+list.get(i).getName()+": "+list.get(i).getPosition()+". And on boat position taken situation:";
+			for(int j=0;j<list.get(i).getPositionTaken().size();j++) {
+				s=s+" "+list.get(i).getPositionTaken().get(j);
+			}
+			s=s+"\r\n";
 		}
 		return s;
 	}
@@ -21,7 +25,6 @@ public class Boats {
 		list.get(0).dice();
 		list.get(1).dice();
 		list.get(2).dice();
-		System.out.println(toString());
 	}
 	
 	public Boat getBoat(int i) {

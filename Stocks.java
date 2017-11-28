@@ -34,5 +34,13 @@ public class Stocks {
 		else return false;
 	}
 	
+	public String toString() {
+		String s="";
+		for(int i=0;i<4;i++) {
+			s=s+list.get(i).getName()+": "+list.get(i).getPrice()+"\r\n";
+		}		
+		return s;
+	}
+	
 
 }
