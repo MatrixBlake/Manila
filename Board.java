@@ -147,9 +147,13 @@ public class Board {
 		System.out.println(stocks);
 	}
 	
+	public Stocks getStocks() {return stocks;}
+	public Players getPlayers() {return players;}
+	public Boats getBoats() {return boats;}
+	
 	public static void main(String[] args) {
 		Board bo= new Board();
-		while(!bo.stocks.finish()) {
+		while(!bo.getStocks().finish()) {
 			bo.bid();
 			bo.setBoats();
 			for(int i=0;i<3;i++) {
