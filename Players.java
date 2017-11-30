@@ -45,5 +45,8 @@ public class Players {
 	public void earn(int i, int m) {
 		list.get(i).earn(m);
 	}
+	
+	public ArrayList<Player> getPlayersList(){return list;}
+	
 
 }

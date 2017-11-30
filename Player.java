@@ -33,4 +33,9 @@ public class Player {
 	public int getGreen() {return greenNumber;}
 	public int getMoney() {return money;}
 	
+	public String toString() {
+		String s="";
+		s=s+" black:"+blackNumber+" blue:"+blueNumber+" green:"+greenNumber+" yellow:"+yellowNumber+" money: "+money;
+		return s;
+	}
 }
