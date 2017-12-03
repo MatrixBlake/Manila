@@ -56,6 +56,9 @@ public class Board {
 			if(brk==true) {break;}
 		}
 		players.pay(captain, max);
+	}
+		
+	public void buyStock() {
 		String stk=(String) JOptionPane.showInputDialog(null, "Captain"+(captain+1)+" , buy 1 stock", "Buy", JOptionPane.INFORMATION_MESSAGE, null, possibleValues, possibleValues[0]);
 		players.buyStock(captain, stk);
 		if(stocks.getPrice(stk)==0)players.pay(captain, 5);
@@ -83,23 +86,38 @@ public class Board {
 		System.out.println(boats);
 	}
 	
-	public void takePosition() {
-		Object[] AllPostions= {boats.getBoat(0).getName(),boats.getBoat(1).getName(),boats.getBoat(2).getName(),"whalf1","whalf2","whalf3","shipyard1","shipyard2","shipyard3","insurrance"};
+	public Object[] takePosition(Object[] AllPostions) {
 		for(int i=0;i<players.getNumber();i++) {
 			String choice=(String) JOptionPane.showInputDialog(null, "Player"+(i+1)+" , choose 1 position", "Position", JOptionPane.INFORMATION_MESSAGE, null, AllPostions, AllPostions[0]);
-			if(choice.equals(boats.getBoat(0).getName())) {players.pay(i, boats.takePosition(0, (i+1)));}
-			if(choice.equals(boats.getBoat(1).getName())) {players.pay(i, boats.takePosition(1, (i+1)));}
-			if(choice.equals(boats.getBoat(2).getName())) {players.pay(i, boats.takePosition(2, (i+1)));}
-			if(choice.equals("whalf1")) {wharfPosition.set(0, i+1);players.pay(i, wharfPrice.get(0));}
-			if(choice.equals("whalf2")) {wharfPosition.set(1, i+1);players.pay(i, wharfPrice.get(1));}
-			if(choice.equals("whalf3")) {wharfPosition.set(2, i+1);players.pay(i, wharfPrice.get(2));}
-			if(choice.equals("shipyard1")) {shipyardPosition.set(0, i+1);players.pay(i, shipyardPrice.get(0));}
-			if(choice.equals("shipyard2")) {shipyardPosition.set(1, i+1);players.pay(i, shipyardPrice.get(1));}
-			if(choice.equals("shipyard3")) {shipyardPosition.set(2, i+1);players.pay(i, shipyardPrice.get(2));}
-			if(choice.equals("insurrance")) {insurrance=i;players.earn(i,10);}
+			if(choice.equals(boats.getBoat(0).getName())) {
+				players.pay(i, boats.takePosition(0, (i+1)));
+				if(boats.getBoat(0).getPositionTaken().get(boats.getBoat(0).getPositionTaken().size()-1)>0){AllPostions=remove(AllPostions,boats.getBoat(0).getName());}
+			}
+			if(choice.equals(boats.getBoat(1).getName())) {
+				players.pay(i, boats.takePosition(1, (i+1)));
+				if(boats.getBoat(1).getPositionTaken().get(boats.getBoat(1).getPositionTaken().size()-1)>0){AllPostions=remove(AllPostions,boats.getBoat(1).getName());}
+			}
+			if(choice.equals(boats.getBoat(2).getName())) {
+				players.pay(i, boats.takePosition(2, (i+1)));
+				if(boats.getBoat(2).getPositionTaken().get(boats.getBoat(2).getPositionTaken().size()-1)>0){AllPostions=remove(AllPostions,boats.getBoat(2).getName());}
+			}
+			if(choice.equals("whalf1")) {wharfPosition.set(0, i+1);players.pay(i, wharfPrice.get(0));AllPostions=remove(AllPostions,"whalf1");}
+			if(choice.equals("whalf2")) {wharfPosition.set(1, i+1);players.pay(i, wharfPrice.get(1));AllPostions=remove(AllPostions,"whalf2");}
+			if(choice.equals("whalf3")) {wharfPosition.set(2, i+1);players.pay(i, wharfPrice.get(2));AllPostions=remove(AllPostions,"whalf3");}
+			if(choice.equals("shipyard1")) {shipyardPosition.set(0, i+1);players.pay(i, shipyardPrice.get(0));AllPostions=remove(AllPostions,"shipyard1");}
+			if(choice.equals("shipyard2")) {shipyardPosition.set(1, i+1);players.pay(i, shipyardPrice.get(1));AllPostions=remove(AllPostions,"shipyard2");}
+			if(choice.equals("shipyard3")) {shipyardPosition.set(2, i+1);players.pay(i, shipyardPrice.get(2));AllPostions=remove(AllPostions,"shipyard3");}
+			if(choice.equals("insurrance")) {insurrance=i;players.earn(i,10);AllPostions=remove(AllPostions,"insurrance");}
 		}
-		System.out.println(positionSituation());
-		System.out.println(players);		
+		return AllPostions;		
+	}
+	
+	public Object[] remove(Object[] AllPostions, String s) {
+		ArrayList<Object> l=new ArrayList<Object>();
+		for(int i=0;i<AllPostions.length;i++) {l.add(AllPostions[i]);}
+		l.remove(s);
+		Object[] array = (Object[])l.toArray(new Object[l.size()]); 
+		return array;
 	}
 	
 	public String positionSituation() {
@@ -116,54 +134,68 @@ public class Board {
 	}
 	
 	public void check() {
+		getToWharf=0;
+		getToShipyard=0;
 		for(int i=0;i<3;i++) {
 			if(boats.getPosition(i)>13) getToWharf++;
 			if(boats.getPosition(i)<13) getToShipyard++;
 		}
 	}
 	
-	public void balance() {
+	public String balance() {
+		String s="";
 		for(int i=0;i<3;i++) {
 			if(boats.getBoat(i).getPosition()>13 && boats.getPositionTaken(i).get(0)>0) {
 				int earn=boats.earning(i);
 				for(int j=0;j<boats.getPositionTaken(i).size();j++) {
-					if(boats.getPositionTaken(i).get(j)>0) {players.earn(boats.getPositionTaken(i).get(j)-1, earn);}
+					if(boats.getPositionTaken(i).get(j)>0) {
+						players.earn(boats.getPositionTaken(i).get(j)-1, earn);
+						s=s+"player"+boats.getPositionTaken(i).get(j)+" earns "+earn+" for "+boats.getBoat(i).getName()+"\r\n";
+					}
 				}
 			}
 		}
-		if(wharfPosition.get(0)>0 && getToWharf>0) {players.earn(wharfPosition.get(0)-1, 6);}
-		if(wharfPosition.get(1)>0 && getToWharf>1) {players.earn(wharfPosition.get(1)-1, 8);}
-		if(wharfPosition.get(2)>0 && getToWharf>2) {players.earn(wharfPosition.get(0)-1, 15);}
-		if(shipyardPosition.get(0)>0 && getToShipyard>0) {players.earn(shipyardPosition.get(0)-1, 6);}
-		if(shipyardPosition.get(1)>0 && getToShipyard>1) {players.earn(shipyardPosition.get(0)-1, 8);}
-		if(shipyardPosition.get(2)>0 && getToShipyard>2) {players.earn(shipyardPosition.get(0)-1, 15);}
+		if(wharfPosition.get(0)>0 && getToWharf>0) {
+			players.earn(wharfPosition.get(0)-1, 6);
+			s=s+"player"+wharfPosition.get(0)+" earns 6 for "+"wharf1\r\n";
+		}
+		if(wharfPosition.get(1)>0 && getToWharf>1) {
+			players.earn(wharfPosition.get(1)-1, 8);
+			s=s+"player"+wharfPosition.get(1)+" earns 8 for "+"wharf2\r\n";
+		}
+		if(wharfPosition.get(2)>0 && getToWharf>2) {
+			players.earn(wharfPosition.get(2)-1, 15);
+			s=s+"player"+wharfPosition.get(2)+" earns 15 for "+"wharf3\r\n";
+		}
+		if(shipyardPosition.get(0)>0 && getToShipyard>0) {
+			players.earn(shipyardPosition.get(0)-1, 6);
+			s=s+"player"+shipyardPosition.get(0)+" earns 6 for "+"shipyard1\r\n";
+		}
+		if(shipyardPosition.get(1)>0 && getToShipyard>1) {
+			players.earn(shipyardPosition.get(1)-1, 8);
+			s=s+"player"+shipyardPosition.get(1)+" earns 8 for "+"shipyard2\r\n";
+		}
+		if(shipyardPosition.get(2)>0 && getToShipyard>2) {
+			players.earn(shipyardPosition.get(2)-1, 15);
+			s=s+"player"+shipyardPosition.get(2)+" earns 6 for "+"shipyard3\r\n";
+		}
 		if(insurrance>0) {
-			if(getToShipyard==1)players.pay(insurrance-1, 6);
-			if(getToShipyard==2)players.pay(insurrance-1, 14);
-			if(getToShipyard==3)players.pay(insurrance-1, 29);
+			s=s+"player"+insurrance+" pays ";
+			if(getToShipyard==1) {players.pay(insurrance-1, 6);s=s+6;}
+			if(getToShipyard==2) {players.pay(insurrance-1, 14);s=s+14;}
+			if(getToShipyard==3) {players.pay(insurrance-1, 29);s=s+29;}
+			s=s+" for insurrance";
 		}
 		for(int i=0;i<3;i++) {if(boats.getPosition(i)>13) {stocks.updatePrice(boats.getBoat(i).getName());}}
 		System.out.println(players);
 		System.out.println(stocks);
+		return s;
 	}
 	
 	public Stocks getStocks() {return stocks;}
 	public Players getPlayers() {return players;}
 	public Boats getBoats() {return boats;}
 	
-	public static void main(String[] args) {
-		Board bo= new Board();
-		while(!bo.getStocks().finish()) {
-			bo.bid();
-			bo.setBoats();
-			for(int i=0;i<3;i++) {
-				bo.takePosition();
-				bo.dice();				
-			}
-			bo.check();
-			bo.balance();			
-		}
-		System.out.println(bo.players);		
-	}
+
 
 }

@@ -37,7 +37,7 @@ public class Stocks {
 	public String toString() {
 		String s="";
 		for(int i=0;i<4;i++) {
-			s=s+list.get(i).getName()+": "+list.get(i).getPrice()+"\r\n";
+			s=s+list.get(i).getName()+": "+list.get(i).getPrice()+"  ";
 		}		
 		return s;
 	}
